@@ -14,6 +14,11 @@
 		F0BE700924CB902900FDC0BD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0BE700724CB902900FDC0BD /* Main.storyboard */; };
 		F0BE700B24CB902D00FDC0BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F0BE700A24CB902D00FDC0BD /* Assets.xcassets */; };
 		F0BE700E24CB902D00FDC0BD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0BE700C24CB902D00FDC0BD /* LaunchScreen.storyboard */; };
+		F0C898EB24CCB5BF00796952 /* UICanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C898EA24CCB5BF00796952 /* UICanvas.swift */; };
+		F0C898F124CD3BBF00796952 /* ProjectManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C898F024CD3BBF00796952 /* ProjectManagerProtocol.swift */; };
+		F0C898F324CD3BE600796952 /* CanvasModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C898F224CD3BE600796952 /* CanvasModelProtocol.swift */; };
+		F0C898F524CD3C3200796952 /* ProjectRawModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C898F424CD3C3200796952 /* ProjectRawModels.swift */; };
+		F0C898F724CD533800796952 /* LocalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C898F624CD533800796952 /* LocalManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +31,11 @@
 		F0BE700A24CB902D00FDC0BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F0BE700D24CB902D00FDC0BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F0BE700F24CB902D00FDC0BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F0C898EA24CCB5BF00796952 /* UICanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICanvas.swift; sourceTree = "<group>"; };
+		F0C898F024CD3BBF00796952 /* ProjectManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectManagerProtocol.swift; sourceTree = "<group>"; };
+		F0C898F224CD3BE600796952 /* CanvasModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasModelProtocol.swift; sourceTree = "<group>"; };
+		F0C898F424CD3C3200796952 /* ProjectRawModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectRawModels.swift; sourceTree = "<group>"; };
+		F0C898F624CD533800796952 /* LocalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,16 +68,45 @@
 		F0BE6FFE24CB902900FDC0BD /* DrawingPad */ = {
 			isa = PBXGroup;
 			children = (
+				F0C898E924CCB55F00796952 /* Controllers */,
+				F0C898E824CCB54100796952 /* Models */,
+				F0C898E724CCB53200796952 /* Views */,
 				F0BE6FFF24CB902900FDC0BD /* AppDelegate.swift */,
 				F0BE700124CB902900FDC0BD /* SceneDelegate.swift */,
-				F0BE700324CB902900FDC0BD /* MasterViewController.swift */,
-				F0BE700524CB902900FDC0BD /* DetailViewController.swift */,
 				F0BE700724CB902900FDC0BD /* Main.storyboard */,
 				F0BE700A24CB902D00FDC0BD /* Assets.xcassets */,
 				F0BE700C24CB902D00FDC0BD /* LaunchScreen.storyboard */,
 				F0BE700F24CB902D00FDC0BD /* Info.plist */,
 			);
 			path = DrawingPad;
+			sourceTree = "<group>";
+		};
+		F0C898E724CCB53200796952 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F0C898EA24CCB5BF00796952 /* UICanvas.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		F0C898E824CCB54100796952 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F0C898F024CD3BBF00796952 /* ProjectManagerProtocol.swift */,
+				F0C898F224CD3BE600796952 /* CanvasModelProtocol.swift */,
+				F0C898F424CD3C3200796952 /* ProjectRawModels.swift */,
+				F0C898F624CD533800796952 /* LocalManager.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		F0C898E924CCB55F00796952 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				F0BE700324CB902900FDC0BD /* MasterViewController.swift */,
+				F0BE700524CB902900FDC0BD /* DetailViewController.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -141,8 +180,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0C898F324CD3BE600796952 /* CanvasModelProtocol.swift in Sources */,
 				F0BE700024CB902900FDC0BD /* AppDelegate.swift in Sources */,
 				F0BE700224CB902900FDC0BD /* SceneDelegate.swift in Sources */,
+				F0C898F524CD3C3200796952 /* ProjectRawModels.swift in Sources */,
+				F0C898F124CD3BBF00796952 /* ProjectManagerProtocol.swift in Sources */,
+				F0C898F724CD533800796952 /* LocalManager.swift in Sources */,
+				F0C898EB24CCB5BF00796952 /* UICanvas.swift in Sources */,
 				F0BE700424CB902900FDC0BD /* MasterViewController.swift in Sources */,
 				F0BE700624CB902900FDC0BD /* DetailViewController.swift in Sources */,
 			);

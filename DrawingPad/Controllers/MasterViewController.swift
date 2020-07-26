@@ -17,8 +17,8 @@ class MasterViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        navigationItem.leftBarButtonItem = editButtonItem
-
+        //navigationItem.leftBarButtonItem = editButtonItem
+        splitViewController?.preferredDisplayMode = .primaryOverlay
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
         navigationItem.rightBarButtonItem = addButton
         if let split = splitViewController {
@@ -31,7 +31,9 @@ class MasterViewController: UITableViewController {
         clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
         super.viewWillAppear(animated)
     }
-
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+    }
     @objc
     func insertNewObject(_ sender: Any) {
         objects.insert(NSDate(), at: 0)
@@ -71,10 +73,10 @@ class MasterViewController: UITableViewController {
         return cell
     }
 
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    /*/override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
-    }
+    }*/
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -87,4 +89,6 @@ class MasterViewController: UITableViewController {
 
 
 }
+
+
 
