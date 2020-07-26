@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol ProjectManagerProtocol : class {
+protocol ProjectsControlProtocol : class {
     func loadModel(completionHandler closure: @escaping (Bool,[CanvasBrife]?) -> Void)
     func saveModel(_ model:[CanvasBrife], closure: @escaping (Bool) -> Void)
 }
