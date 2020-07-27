@@ -15,7 +15,6 @@ struct CanvasBrife : Codable{
     var unique_name:String
     var createdTime:Date=Date()
     var workingDuration:Double = 0
-    var thumbNail:URL?
 }
 
 class ProjectsManager{
@@ -43,21 +42,22 @@ class ProjectsManager{
     }
     
     func addCanvas(modelSaveFinishedHandler closureModel:@escaping (Bool)->Void, canvasSaveFinishedHandler closureCanvas:@escaping (Bool, CanvasObject?)->Void){
-        var canvasObject = CanvasObject()
+        let canvasObject = CanvasObject()
         canvasObject.savedelegate = canvasdelegate
         let brife = CanvasBrife(unique_name: canvasObject.name)
         brifes.append(brife)
-        projectdelegate?.saveModel(brifes, closure: { (success) in
+        projectdelegate?.saveModel(brifes, closure: {[weak self] (success) in
             DispatchQueue.main.async {
                 closureModel(success)
+                self?.canvasdelegate?.saveCanvas(canvasObject, completionHandler: { (success) in
+                    DispatchQueue.main.async {
+                        closureCanvas(success, success == true ? canvasObject : nil)
+                        
+                    }
+                })
             }
         })
-        canvasdelegate?.saveCanvas(canvasObject, completionHandler: { (success) in
-            DispatchQueue.main.async {
-                closureCanvas(success, success == true ? canvasObject : nil)
-                
-            }
-        })
+        
     }
     
     func deleteCanvas(at index:Int, completionHandler closure:@escaping (Bool)->Void){
@@ -69,6 +69,11 @@ class ProjectsManager{
                     self?.canvasdelegate?.deleteCanvas(brife.unique_name, completionHandler: { (success) in
                         if success == true{
                             DispatchQueue.main.async {
+                                if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true){
+                                    dispathQueueForFileOperation.async {
+                                        try? FileManager.default.removeItem(at: url)
+                                    }
+                                }
                                 closure(success)
                             }
                         }
@@ -114,7 +119,7 @@ class ProjectsManager{
     func openCanvas(at index:Int, completionHandler closure: @escaping (Bool,CanvasObject?)->Void ) -> Void {
         if index < count {
             canvasdelegate?.loadCanvas(WithName: self.brifes[index].unique_name) { (success, canvas) in
-                var localcanvas = canvas
+                let localcanvas = canvas
                 localcanvas?.savedelegate = self.canvasdelegate
                 DispatchQueue.main.async {
                     closure(success,localcanvas)

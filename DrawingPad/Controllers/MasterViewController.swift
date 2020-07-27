@@ -12,7 +12,8 @@ class MasterViewController: UITableViewController {
 
     var detailViewController: DetailViewController? = nil
     var projects:ProjectsManager = ProjectsManager.getLocalProjectManager()
-    
+    var thumbNails:[UIImage?]=[UIImage?]()
+    var dispathQueueLoadThumbNails = DispatchQueue(label: "com.xiang.thumbnails")
     var blocktag:Int = 0 {
         didSet{
             if(blocktag == 0){
@@ -25,6 +26,7 @@ class MasterViewController: UITableViewController {
     }
 
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         navigationItem.leftBarButtonItem = editButtonItem
@@ -35,11 +37,37 @@ class MasterViewController: UITableViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
+        // load files
         projects.openProjects { [weak self](success) in
             if success == true{
                 self?.tableView.reloadData()
+                
+                // load thumbnails
+                self?.dispathQueueLoadThumbNails.async {
+                    [weak self] in
+                    if let _project = self?.projects{
+                        for index in 0..<_project.count{
+                            if let name = _project[index]?.unique_name, let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(name).png"){
+                                if let data = try? Data(contentsOf: url){
+                                    self?.thumbNails.append(UIImage(data: data))
+                                }
+                                else{
+                                    self?.thumbNails.append(nil)
+                                }
+                            }
+                            else{
+                                self?.thumbNails.append(nil)
+                            }
+                        }
+                        DispatchQueue.main.async {
+                            self?.tableView.reloadData()
+                        }
+                    }
+                }
             }
         }
+        // register thumbnails changed notification
+        NotificationCenter.default.addObserver(self, selector: #selector(MasterViewController.methodOfReceivedNotification(notification:)), name: Notification.Name("updateProjectInfo"), object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -50,13 +78,46 @@ class MasterViewController: UITableViewController {
         super.viewWillLayoutSubviews()
     }
     
-    @objc
-    func insertNewObject(_ sender: Any) {
+    
+    // notification processing
+    @objc func methodOfReceivedNotification(notification: Notification) {
+         // Take Action on Notification
+           if notification.name.rawValue == "updateProjectInfo"{
+               if let userInfo = notification.userInfo{
+                   for index in 0..<projects.count{
+                       if let fileName = userInfo["fileName"] as? String{
+                           if projects[index]!.unique_name == fileName{
+                               projects[index]!.workingDuration += userInfo["time"] as! Double
+                               tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+                               self.dispathQueueLoadThumbNails.async{
+                                   [weak self] in
+                                   if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create:true).appendingPathComponent("\(fileName).png"){
+                                       if let data = try? Data(contentsOf: url){
+                                           self?.thumbNails[index] = UIImage(data: data)
+                                           DispatchQueue.main.async {
+                                               self?.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+                                           }
+                                       }
+                                   }
+                               }
+                               break
+                           }
+                       }
+                   }
+               }
+           }
+       }
+    
+    // add new canvas
+    @objc func insertNewObject(_ sender: Any) {
         blocktag = 2
         projects.addCanvas(modelSaveFinishedHandler: { [weak self] (success) in
             if success == true {
-                self?.tableView.reloadData()
-                //self?.tableView.insertRows(at: [IndexPath(row: (self?.projects.count ?? 1)-1, section: 0)], with: .automatic)
+                //self?.tableView.reloadData()
+                self?.thumbNails.append(nil)
+                if let _projects = self?.projects{
+                    self?.tableView.insertRows(at: [IndexPath(row: _projects.count-1, section: 0)], with: .automatic)
+                }
             }
             self?.blocktag -= 1
         }) {[weak self] (success, canvasObject) in
@@ -68,16 +129,10 @@ class MasterViewController: UITableViewController {
         }
     }
     
-    @objc func processNotifcation(_ notification:Notification) {
-        // Do something nowk
-        if notification.name.rawValue == "updateProjectInfo", let userInfo = notification.userInfo{
-            for index in 0..<projects.count{
-                if projects[index]?.unique_name == userInfo["fileName"]{
-                    projects[index].workingDuration += userInfo["time"]!
-                    self.tabl
-            }
-        }
-    }
+     
+
+    
+    
     // MARK: - Segues
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -107,7 +162,7 @@ class MasterViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return 80
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -116,6 +171,9 @@ class MasterViewController: UITableViewController {
             cell.createdTimeLable.text = "Created on \(object.createdTime)"
             let (h,m,s) = secondsToHoursMinutesSeconds(seconds: Int(object.workingDuration))
             cell.workingTimeLabel.text = "Working on this \(h)H\(m)M\(s)S"
+            if(indexPath.row < self.thumbNails.count){
+                cell.thumbNailsImageView.image = self.thumbNails[indexPath.row]
+            }
         }
         return cell
     }
@@ -133,6 +191,7 @@ class MasterViewController: UITableViewController {
                     self?.blocktag = 0
                     if(success == true){
                         self?.tableView.deleteRows(at: [indexPath], with: .fade)
+                        self?.detailViewController?.canvasObject = nil
                     }
                 }
             } else if editingStyle == .insert {

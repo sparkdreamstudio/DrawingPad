@@ -83,6 +83,9 @@ class CanvasObject{
         if(status & Status.recording.rawValue > 0){
             drawsRecord.append(drawing.uuid)
         }
+        if lastOperationTime == 0{
+            lastOperationTime = Date().timeIntervalSince1970
+        }
     }
     func addStrokes(_ strokes:[StrokeRaw]){
         if status & Status.drawing.rawValue > 0 {
@@ -106,21 +109,21 @@ class CanvasObject{
         }
         let filename = self.name
         var operationtime = 0.0
-        if lastOperationTime != 0{
-            let currentTime = Date().timeIntervalSince1970
-            operationtime = currentTime - lastOperationTime
-            lastOperationTime = currentTime
-        }
+        let currentTime = Date().timeIntervalSince1970
+        operationtime = currentTime - lastOperationTime
+        lastOperationTime = currentTime
         let fileName = self.name
         drawingDelegate?.drawThumbNail(from: strokes, completionHandler: { (image) in
             dispathQueueForFileOperation.async {
-                if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create:true).appendingPathComponent("\(filename).jpg")
+                if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create:true).appendingPathComponent("\(filename).png")
                 {
                     do {
                         if let _image = image{
                             try _image.pngData()?.write(to: url)
                             let notification = Notification(name: NSNotification.Name(rawValue: "updateProjectInfo"), object: self, userInfo: ["fileName":fileName,"url":url,"time":operationtime])
-                            NotificationCenter.default.post(notification)
+                            DispatchQueue.main.async {
+                                NotificationCenter.default.post(notification)
+                            }
                         }
                     } catch let error {
                         print("\(error)")

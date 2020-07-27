@@ -36,8 +36,12 @@ class DetailViewController: UIViewController, CanvasModelDelegate, UICanvasDeleg
     var canvasObject: CanvasObject? {
         didSet{
             if oldValue == nil{
+                canvas.isHidden = false;
                 canvasObject?.drawingDelegate = self
                 canvas.setNeedsDisplay()
+            }
+            if canvasObject == nil{
+                canvas.isHidden = true
             }
         }
     }
