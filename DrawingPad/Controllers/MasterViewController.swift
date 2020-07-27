@@ -16,10 +16,10 @@ class MasterViewController: UITableViewController {
     var blocktag:Int = 0 {
         didSet{
             if(blocktag == 0){
-                blockInteraction(false)
+                //blockInteraction(false)
             }
             else{
-                blockInteraction(true)
+                //blockInteraction(true)
             }
         }
     }
@@ -50,10 +50,6 @@ class MasterViewController: UITableViewController {
         super.viewWillLayoutSubviews()
     }
     
-    func blockInteraction(_ enable:Bool){
-        
-    }
-    
     @objc
     func insertNewObject(_ sender: Any) {
         blocktag = 2
@@ -71,7 +67,17 @@ class MasterViewController: UITableViewController {
             }
         }
     }
-
+    
+    @objc func processNotifcation(_ notification:Notification) {
+        // Do something nowk
+        if notification.name.rawValue == "updateProjectInfo", let userInfo = notification.userInfo{
+            for index in 0..<projects.count{
+                if projects[index]?.unique_name == userInfo["fileName"]{
+                    projects[index].workingDuration += userInfo["time"]!
+                    self.tabl
+            }
+        }
+    }
     // MARK: - Segues
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -107,7 +113,9 @@ class MasterViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! ProjectBrifeTableViewCell
         if let object = projects[indexPath.row]{
-            cell.createdTimeLable.text = "created on \(object.createdTime)"
+            cell.createdTimeLable.text = "Created on \(object.createdTime)"
+            let (h,m,s) = secondsToHoursMinutesSeconds(seconds: Int(object.workingDuration))
+            cell.workingTimeLabel.text = "Working on this \(h)H\(m)M\(s)S"
         }
         return cell
     }
@@ -118,22 +126,24 @@ class MasterViewController: UITableViewController {
     }*/
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-           //objects.remove(at: indexPath.row)
-            blocktag = 1
-            projects.deleteCanvas(at: indexPath.row) {[weak self] (success) in
-                self?.blocktag = 0
-                if(success == true){
-                    self?.tableView.deleteRows(at: [indexPath], with: .fade)
+            if editingStyle == .delete {
+               //objects.remove(at: indexPath.row)
+                blocktag = 1
+                projects.deleteCanvas(at: indexPath.row) {[weak self] (success) in
+                    self?.blocktag = 0
+                    if(success == true){
+                        self?.tableView.deleteRows(at: [indexPath], with: .fade)
+                    }
                 }
+            } else if editingStyle == .insert {
+                // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
             }
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }
-    }
-    
 
+}
 
+func secondsToHoursMinutesSeconds (seconds : Int) -> (Int, Int, Int) {
+  return (seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60)
 }
 
 

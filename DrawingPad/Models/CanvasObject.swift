@@ -44,6 +44,7 @@ class CanvasObject{
     //MARK: Operation properties
     private var status:UInt8 = Status.idle.rawValue
     private var brush:Brush = Brush(width: 1, color: .black)
+    private var lastOperationTime:Double = 0
     
     //MARK: Delegate
     weak var savedelegate:ModifyCanvasModelProtocol?
@@ -104,18 +105,28 @@ class CanvasObject{
             }
         }
         let filename = self.name
+        var operationtime = 0.0
+        if lastOperationTime != 0{
+            let currentTime = Date().timeIntervalSince1970
+            operationtime = currentTime - lastOperationTime
+            lastOperationTime = currentTime
+        }
+        let fileName = self.name
         drawingDelegate?.drawThumbNail(from: strokes, completionHandler: { (image) in
-            DispatchQueue.global().async {
-                /*if url = FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create:
-                    true).appendingPathComponent("\(filename).jpg")
+            dispathQueueForFileOperation.async {
+                if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create:true).appendingPathComponent("\(filename).jpg")
                 {
                     do {
-                        //try image.pngData()?.write(to: url)
+                        if let _image = image{
+                            try _image.pngData()?.write(to: url)
+                            let notification = Notification(name: NSNotification.Name(rawValue: "updateProjectInfo"), object: self, userInfo: ["fileName":fileName,"url":url,"time":operationtime])
+                            NotificationCenter.default.post(notification)
+                        }
                     } catch let error {
-                        //NotificationCenter.default.post(name: <#T##NSNotification.Name#>, object: <#T##Any?#>)
+                        print("\(error)")
                     }
                     
-                }*/
+                }
             }
         })
     }

@@ -14,7 +14,8 @@ var dispathQueueForFileOperation = DispatchQueue(label: "com.xiang.fileOperation
 struct CanvasBrife : Codable{
     var unique_name:String
     var createdTime:Date=Date()
-    var workingDuration:Int=0
+    var workingDuration:Double = 0
+    var thumbNail:URL?
 }
 
 class ProjectsManager{
@@ -23,11 +24,19 @@ class ProjectsManager{
     var canvasdelegate: (LoadAndDeleteCanvasModelProtocol & ModifyCanvasModelProtocol)?
     
     subscript(index:Int) -> CanvasBrife?{
-        if index >= count
-        {
-            return nil
+        get{
+            if index >= count
+            {
+                return nil
+            }
+            return brifes[index]
         }
-        return brifes[index]
+        set(newValue){
+            if let _newValue = newValue, index < count{
+                brifes[index] = _newValue
+            }
+        }
+        
     }
     var count:Int {
         return brifes.count
