@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 struct EraserStroke : AbstractStroke {    
-    var created: Date = Date()
+    var created: Double = Date().timeIntervalSince1970
     var color: UIColor = .clear
     var width: CGFloat = 0
     var points = [CGPoint](repeating: CGPoint(), count: 5)

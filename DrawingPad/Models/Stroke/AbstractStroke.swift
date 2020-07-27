@@ -12,7 +12,7 @@ import UIKit
 struct StrokeRaw : Codable{
     var type:String
     var points:[StrokePoint]
-    var created:Date
+    var created:Double
     var color:StrokeColor
     var width:CGFloat
 }
@@ -57,7 +57,7 @@ struct StrokeColor: Codable {
 protocol AbstractStroke {
     var color:UIColor {get set}
     var width:CGFloat {get set}
-    var created:Date {get set}
+    var created:Double {get set}
     var points:[CGPoint] {get set}
     func isConinuous() -> Bool
     func isCompleted() -> Bool

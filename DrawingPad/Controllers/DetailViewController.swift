@@ -9,6 +9,8 @@
 import UIKit
 
 class DetailViewController: UIViewController, CanvasModelDelegate, UICanvasDelegate {
+    
+    
     @IBOutlet weak var canvas:UICanvas!
     @IBOutlet weak var slider:UISlider!
     @IBOutlet var collectionOfButtons: Array<UIButton>?
@@ -86,15 +88,7 @@ class DetailViewController: UIViewController, CanvasModelDelegate, UICanvasDeleg
         configureView()
     }
     
-    func getStrokes(_ strokes: [StrokeRaw]) {
-        var nextStrokes = [AbstractStroke]()
-        for strokeraw in strokes{
-            if let nextStroke = getStrokeFrom(raw: strokeraw){
-                nextStrokes.append(nextStroke)
-            }
-        }
-        canvas.nextStrokes = nextStrokes
-    }
+    
 
     //MARK: UICanvasDelegate
        
@@ -128,6 +122,83 @@ class DetailViewController: UIViewController, CanvasModelDelegate, UICanvasDeleg
         canvasObject?.redraw(rect)
     }
 
-
+    // MARK: play and record
+    @IBOutlet weak var playButton: UIBarButtonItem!
+    @IBOutlet weak var recordButton: UIBarButtonItem!
+    var isRecording:Bool = false
+    var isPlaying:Bool = false
+    @IBAction func record(_ sender: UIBarButtonItem) {
+        if isPlaying == true{
+            return
+        }
+        if isRecording == true{
+            recordButton.title = "record"
+            isRecording = false
+            canvasObject?.stopRecord()
+            
+        }
+        else{
+            recordButton.title = "Stop"
+            isRecording = true
+            canvasObject?.startRecord()
+        }
+    }
+    
+    @IBAction func chooseRecordToPlay(_ sender: UIBarButtonItem) {
+        if isRecording == true{
+            return
+        }
+        
+        if isPlaying == false{
+            playButton.title = "RecordPlaying"
+            isPlaying = true
+            canvas.buffer=nil
+            canvasObject?.startPlay()
+            canvas.drawable = false
+        }
+    }
+    //MARK: canvasObject delegate
+    
+    func playRecordEnd() {
+        isPlaying = false
+        playButton.title = "Play"
+        //canvas.buffer = nil
+        canvas.setNeedsDisplay()
+        canvas.drawable = true
+    }
+    
+    func drawThumbNail(from strokes:[StrokeRaw], completionHandler closure: @escaping (UIImage?)->Void){
+        var newStrokes = [AbstractStroke]()
+        for strokeraw in strokes{
+            if let newStroke = getStrokeFrom(raw: strokeraw.getScaledData(scale: 0.05)){
+                newStrokes.append(newStroke)
+            }
+        }
+        canvas.drawImageFromStrokes(strokes: newStrokes, in: CGSize(width: 50, height: 50)) { (image) in
+            DispatchQueue.main.async {
+                closure(image)
+            }
+        }
+    }
+    
+    func getStrokes(_ strokes: [StrokeRaw]) {
+        var nextStrokes = [AbstractStroke]()
+        for strokeraw in strokes{
+            if let nextStroke = getStrokeFrom(raw: strokeraw){
+                nextStrokes.append(nextStroke)
+            }
+        }
+        canvas.nextStrokes = nextStrokes
+    }
 }
 
+
+extension StrokeRaw{
+    func getScaledData(scale:CGFloat)->StrokeRaw{
+        var newPoints = [StrokePoint]()
+        for point in points{
+            newPoints.append(StrokePoint(x: point.x*scale, y: point.y*scale))
+        }
+        return StrokeRaw(type: type, points: newPoints, created: created, color: color, width: width*scale)
+    }
+}

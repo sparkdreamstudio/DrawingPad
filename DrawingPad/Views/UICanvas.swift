@@ -25,7 +25,7 @@ class UICanvas: UIView {
     }*/
     // MARK: canvas properties
     private var drawing:Bool = false
-    private var buffer:UIImage? {
+    var buffer:UIImage? {
         didSet{
             if let image = self.buffer{
                 visibleCanvas.image = image
@@ -52,7 +52,6 @@ class UICanvas: UIView {
     }
     var strokeOfBrush:AbstractStroke?
     private var strokeForGesture:AbstractStroke?
-    
     
     // MARK: view properties
 
@@ -106,15 +105,16 @@ class UICanvas: UIView {
             canvasDelegate?.drawBeganWith(stroke: nil)
             let point = gesture.location(in: visibleCanvas).getPointAddOffset(offset)
             strokeForGesture = strokeOfBrush
-            strokeForGesture?.created = Date()
+            strokeForGesture?.created = Date().timeIntervalSince1970
             strokeForGesture?.addPoint(point)
             //touchMoveMemory[touchMoveCount] = gesture.location(in: visibleCanvas)
         }
         else if(gesture.state == .changed){
             let point = gesture.location(in: visibleCanvas).getPointAddOffset(offset)
             strokeForGesture?.addPoint(point)
-            if let _drawingStroke = strokeForGesture{
+            if var _drawingStroke = strokeForGesture{
                 if _drawingStroke.isCompleted() && _drawingStroke.isConinuous(){
+                    _drawingStroke.created = Date().timeIntervalSince1970
                     canvasDelegate?.drawContinuouStroke(_drawingStroke)
                 }
             }
@@ -139,6 +139,26 @@ class UICanvas: UIView {
                 
                 
             }
+        }
+    }
+    func drawImageFromStrokes(strokes:[AbstractStroke],in size:CGSize,completionHandler closure: @escaping (UIImage?)->Void){
+        drawImageQueue.async {
+            UIGraphicsBeginImageContext(size)
+            let context = UIGraphicsGetCurrentContext()
+            UIColor.clear.setFill()
+            UIRectFill(CGRect(origin: CGPoint(x: 0, y: 0), size: size))
+            context?.setLineCap(.round)
+
+            
+                for stroke in strokes{
+                    stroke.drawRelativeOrigin(CGPoint(x:0,y:0), onContext: context)
+                }
+
+            
+            let tempImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            closure(tempImage)
+            
         }
     }
     private func drawStrokesToVisibleImage(){

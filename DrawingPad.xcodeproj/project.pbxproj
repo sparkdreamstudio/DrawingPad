@@ -17,12 +17,13 @@
 		F0C898EB24CCB5BF00796952 /* UICanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C898EA24CCB5BF00796952 /* UICanvas.swift */; };
 		F0C898F124CD3BBF00796952 /* ProjectsControlProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C898F024CD3BBF00796952 /* ProjectsControlProtocol.swift */; };
 		F0C898F324CD3BE600796952 /* CanvasModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C898F224CD3BE600796952 /* CanvasModelProtocol.swift */; };
-		F0C898F524CD3C3200796952 /* ProjectRawModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C898F424CD3C3200796952 /* ProjectRawModels.swift */; };
+		F0C898F524CD3C3200796952 /* ProjectsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C898F424CD3C3200796952 /* ProjectsManager.swift */; };
 		F0C898F724CD533800796952 /* LocalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C898F624CD533800796952 /* LocalManager.swift */; };
 		F0CFA70024CE713C00BC95BA /* AbstractStroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CFA6FF24CE713C00BC95BA /* AbstractStroke.swift */; };
 		F0CFA70224CE73AF00BC95BA /* CurveStroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CFA70124CE73AF00BC95BA /* CurveStroke.swift */; };
 		F0CFA70424CE7B2700BC95BA /* EraserStroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CFA70324CE7B2700BC95BA /* EraserStroke.swift */; };
 		F0CFA70624CE902A00BC95BA /* StrokeRawMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CFA70524CE902A00BC95BA /* StrokeRawMap.swift */; };
+		F0CFA70824CEB02E00BC95BA /* CanvasObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CFA70724CEB02E00BC95BA /* CanvasObject.swift */; };
 		F0FEFEEC24CE0BB3005DD5CC /* ProjectBrifeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FEFEEB24CE0BB3005DD5CC /* ProjectBrifeTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -39,12 +40,13 @@
 		F0C898EA24CCB5BF00796952 /* UICanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICanvas.swift; sourceTree = "<group>"; };
 		F0C898F024CD3BBF00796952 /* ProjectsControlProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsControlProtocol.swift; sourceTree = "<group>"; };
 		F0C898F224CD3BE600796952 /* CanvasModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasModelProtocol.swift; sourceTree = "<group>"; };
-		F0C898F424CD3C3200796952 /* ProjectRawModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectRawModels.swift; sourceTree = "<group>"; };
+		F0C898F424CD3C3200796952 /* ProjectsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsManager.swift; sourceTree = "<group>"; };
 		F0C898F624CD533800796952 /* LocalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalManager.swift; sourceTree = "<group>"; };
 		F0CFA6FF24CE713C00BC95BA /* AbstractStroke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractStroke.swift; sourceTree = "<group>"; };
 		F0CFA70124CE73AF00BC95BA /* CurveStroke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurveStroke.swift; sourceTree = "<group>"; };
 		F0CFA70324CE7B2700BC95BA /* EraserStroke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EraserStroke.swift; sourceTree = "<group>"; };
 		F0CFA70524CE902A00BC95BA /* StrokeRawMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeRawMap.swift; sourceTree = "<group>"; };
+		F0CFA70724CEB02E00BC95BA /* CanvasObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasObject.swift; sourceTree = "<group>"; };
 		F0FEFEEB24CE0BB3005DD5CC /* ProjectBrifeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectBrifeTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -106,8 +108,9 @@
 				F0CFA6FE24CE70DA00BC95BA /* Stroke */,
 				F0C898F024CD3BBF00796952 /* ProjectsControlProtocol.swift */,
 				F0C898F224CD3BE600796952 /* CanvasModelProtocol.swift */,
-				F0C898F424CD3C3200796952 /* ProjectRawModels.swift */,
+				F0C898F424CD3C3200796952 /* ProjectsManager.swift */,
 				F0C898F624CD533800796952 /* LocalManager.swift */,
+				F0CFA70724CEB02E00BC95BA /* CanvasObject.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -207,7 +210,7 @@
 				F0C898F324CD3BE600796952 /* CanvasModelProtocol.swift in Sources */,
 				F0BE700024CB902900FDC0BD /* AppDelegate.swift in Sources */,
 				F0BE700224CB902900FDC0BD /* SceneDelegate.swift in Sources */,
-				F0C898F524CD3C3200796952 /* ProjectRawModels.swift in Sources */,
+				F0C898F524CD3C3200796952 /* ProjectsManager.swift in Sources */,
 				F0CFA70624CE902A00BC95BA /* StrokeRawMap.swift in Sources */,
 				F0C898F124CD3BBF00796952 /* ProjectsControlProtocol.swift in Sources */,
 				F0CFA70424CE7B2700BC95BA /* EraserStroke.swift in Sources */,
@@ -215,6 +218,7 @@
 				F0C898EB24CCB5BF00796952 /* UICanvas.swift in Sources */,
 				F0BE700424CB902900FDC0BD /* MasterViewController.swift in Sources */,
 				F0CFA70224CE73AF00BC95BA /* CurveStroke.swift in Sources */,
+				F0CFA70824CEB02E00BC95BA /* CanvasObject.swift in Sources */,
 				F0FEFEEC24CE0BB3005DD5CC /* ProjectBrifeTableViewCell.swift in Sources */,
 				F0BE700624CB902900FDC0BD /* DetailViewController.swift in Sources */,
 			);

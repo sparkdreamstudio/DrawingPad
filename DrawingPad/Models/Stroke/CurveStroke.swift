@@ -11,7 +11,7 @@ import UIKit
 
 
 struct CurveStroke:AbstractStroke{
-    var created: Date = Date()
+    var created: Double = NSDate().timeIntervalSince1970
     var color: UIColor = .clear
     var width: CGFloat = 0
     var points = [CGPoint](repeating: CGPoint(), count: 5)
