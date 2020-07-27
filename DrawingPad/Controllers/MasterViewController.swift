@@ -191,7 +191,11 @@ class MasterViewController: UITableViewController {
                     self?.blocktag = 0
                     if(success == true){
                         self?.tableView.deleteRows(at: [indexPath], with: .fade)
-                        self?.detailViewController?.canvasObject = nil
+                        self?.thumbNails.remove(at: indexPath.row)
+                        if self?.tableView.indexPathForSelectedRow?.row == indexPath.row
+                        {
+                            self?.detailViewController?.canvasObject = nil
+                        }
                     }
                 }
             } else if editingStyle == .insert {
