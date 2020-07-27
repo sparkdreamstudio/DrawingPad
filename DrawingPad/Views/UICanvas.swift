@@ -8,32 +8,23 @@
 
 import UIKit
 
-struct Paint {
-    fileprivate struct Stroke{
-        /*var previousPoint:CGPoint
-        var middlePoint:CGPoint
-        var lastPoint:CGPoint*/
+
+protocol UICanvasDelegate : class {
+    func drawBeganWith(stroke:AbstractStroke?)
+    func drawEndWith(stroke:AbstractStroke?)
+    func drawStrokes(_ strokes:[AbstractStroke])
+    func drawContinuouStroke(_ stroke:AbstractStroke)
+    func redrawOnRect(_ rect:CGRect)
+}
+
+class UICanvas: UIView {
+    /*struct Stroke{
         var points:[CGPoint]
         var strokeColor:CGColor = UIColor.black.cgColor
         var strokeWidth:CGFloat = 1
-    }
-    private var strokeLines:[Stroke] = [Stroke]()
-    mutating fileprivate func addStrokes(_ strokes:[Stroke]){
-        strokeLines = strokeLines + strokes
-    }
-    
-    fileprivate static func getVisibleStrokes(in rect:CGRect, fromPaint paint:Paint) -> [Paint.Stroke]{
-        return paint.strokeLines
-    }
-}
-struct Brush{
-    var color:UIColor = .black
-    var width:CGFloat = 10
-}
-class UICanvas: UIView {
+    }*/
     // MARK: canvas properties
-    var brush = Brush()
-    private var paint:Paint = Paint()
+    private var drawing:Bool = false
     private var buffer:UIImage? {
         didSet{
             if let image = self.buffer{
@@ -41,14 +32,14 @@ class UICanvas: UIView {
             }
         }
     }
-    private var nextStrokes:[Paint.Stroke]? {
+    var nextStrokes:[AbstractStroke]? {
         didSet{
             if self.nextStrokes != nil {
                 self.drawStrokesToVisibleImage()
             }
         }
     }
-    open var canvasSize:CGSize = CGSize.zero {
+    var canvasSize:CGSize = CGSize.zero {
         didSet{
             scrollView.contentSize = canvasSize
         }
@@ -59,9 +50,13 @@ class UICanvas: UIView {
             visibleCanvas.isUserInteractionEnabled = self.drawable
         }
     }
+    var strokeOfBrush:AbstractStroke?
+    private var strokeForGesture:AbstractStroke?
     
     
     // MARK: view properties
+
+    weak var canvasDelegate:UICanvasDelegate?
     private let visibleCanvas:UIImageView = UIImageView()
     private let scrollView:UIScrollView = UIScrollView()
     
@@ -96,62 +91,53 @@ class UICanvas: UIView {
     }
     // Only override draw() if you perform custom drawing.
     // An empty implementation adversely affects performance during animation.
-    
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         visibleCanvas.frame = CGRect(origin: scrollView.contentOffset, size: self.scrollView.bounds.size)
         self.redrawCanvas(inRect: visibleCanvas.frame)
     }
-    private var middlePoint:CGPoint?
-    private var touchMoveMemory:[CGPoint] = [CGPoint](repeating: CGPoint(), count: 5)
-    private var touchMoveCount = 0;
+    //private var middlePoint:CGPoint?
+    //private var touchMoveMemory:[CGPoint] = [CGPoint](repeating: CGPoint(), count: 5)
+    //private var touchMoveCount = 0;
     @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
+        let offset = scrollView.contentOffset
         if(gesture.state == .began){
-            touchMoveCount = 0
-            touchMoveMemory[touchMoveCount] = gesture.location(in: visibleCanvas)
+            drawing = true
+            canvasDelegate?.drawBeganWith(stroke: nil)
+            let point = gesture.location(in: visibleCanvas).getPointAddOffset(offset)
+            strokeForGesture = strokeOfBrush
+            strokeForGesture?.created = Date()
+            strokeForGesture?.addPoint(point)
+            //touchMoveMemory[touchMoveCount] = gesture.location(in: visibleCanvas)
         }
         else if(gesture.state == .changed){
-            let point = gesture.location(in: visibleCanvas)
-            touchMoveCount+=1
-            touchMoveMemory[touchMoveCount] = point
-            if(touchMoveCount==4){
-                let offset = scrollView.contentOffset
-                touchMoveMemory[3]=CGPoint(x: (touchMoveMemory[2].x + touchMoveMemory[4].x)/2,
-                                           y: (touchMoveMemory[2].y + touchMoveMemory[4].y)/2)
-                var points = [CGPoint]()
-                for index in 0...3{
-                    let p = touchMoveMemory[index]
-                    points.append(CGPoint(x: p.x+offset.x, y: p.y+offset.y))
+            let point = gesture.location(in: visibleCanvas).getPointAddOffset(offset)
+            strokeForGesture?.addPoint(point)
+            if let _drawingStroke = strokeForGesture{
+                if _drawingStroke.isCompleted() && _drawingStroke.isConinuous(){
+                    canvasDelegate?.drawContinuouStroke(_drawingStroke)
                 }
-                let stroke = Paint.Stroke(points: points, strokeColor: brush.color.cgColor, strokeWidth: brush.width)
-                touchMoveMemory[0] = touchMoveMemory[3];
-                touchMoveMemory[1] = touchMoveMemory[4];
-                touchMoveCount = 1;
-                self.paint.addStrokes([stroke])
-                self.nextStrokes = [stroke]
-                
             }
-            /*let currentGestPosition = gesture.location(in: visibleCanvas)
-            let offset = scrollView.contentOffset
-            let stroke = Paint.Stroke(previousPoint: CGPoint(x: firstPoint!.x+offset.x, y: firstPoint!.y+offset.y),
-                middlePoint: CGPoint(x: middlePoint!.x+offset.x, y: middlePoint!.y+offset.y),
-                lastPoint: CGPoint(x: currentGestPosition.x+offset.x, y: currentGestPosition.y+offset.y), strokeColor: brush.color.cgColor, strokeWidth: brush.width)
-            firstPoint = middlePoint
-            middlePoint = currentGestPosition
-            self.paint.addStrokes([stroke])
-            self.nextStrokes = [stroke]*/
         }
         else {
-            touchMoveCount = 0
+            drawing = false
+            //touchMoveCount = 0
+            if strokeForGesture?.isConinuous() == false{
+                canvasDelegate?.drawEndWith(stroke: strokeForGesture)
+            }
+            else{
+                canvasDelegate?.drawEndWith(stroke: nil)
+            }
+            
         }
     }
     private func redrawCanvas(inRect rect:CGRect){
-        let _paint = self.paint
+        canvasDelegate?.redrawOnRect(rect)
+        self.buffer = nil
         self.drawImageQueue.async {
-            let strokesToDraw = Paint.getVisibleStrokes(in: rect, fromPaint: _paint)
             DispatchQueue.main.async {
-                self.buffer = nil
-                self.nextStrokes = strokesToDraw
+                
+                
             }
         }
     }
@@ -170,27 +156,23 @@ class UICanvas: UIView {
             }
             if let _strokes = strokes{
                 for stroke in _strokes{
-                    context?.setLineWidth(stroke.strokeWidth)
-                    context?.setStrokeColor(stroke.strokeColor)
-                    if(stroke.strokeColor == UIColor.clear.cgColor){
-                        context?.setBlendMode(.clear)
-                    }
-                    context?.move(to: CGPoint(x: stroke.points[0].x-origin.x,
-                                              y: stroke.points[0].y-origin.y))
-                    context?.addCurve(to: CGPoint(x: stroke.points[3].x-origin.x,
-                                                  y: stroke.points[3].y-origin.y),
-                                      control1: CGPoint(x: stroke.points[1].x-origin.x,
-                                                        y: stroke.points[1].y-origin.y),
-                                      control2: CGPoint(x: stroke.points[2].x-origin.x,
-                                                        y: stroke.points[2].y-origin.y))
-                    context?.strokePath()
+                    stroke.drawRelativeOrigin(origin, onContext: context)
                 }
             }
+            
             let tempImage = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
-            DispatchQueue.main.async {
-                self?.buffer = tempImage
+            if strokes?.count == 1 && strokes?[0].isConinuous()==false && self?.drawing == true{
+                DispatchQueue.main.async {
+                    self?.visibleCanvas.image = tempImage
+                }
             }
+            else{
+                DispatchQueue.main.async {
+                    self?.buffer = tempImage
+                }
+            }
+            
         }
     }
     
@@ -206,5 +188,11 @@ extension UICanvas:UIScrollViewDelegate{
         let newFrame = CGRect(origin: scrollView.contentOffset, size: self.scrollView.bounds.size)
         visibleCanvas.frame = newFrame
         self.redrawCanvas(inRect: newFrame)
+    }
+}
+
+extension CGPoint{
+    func getPointAddOffset(_ offset:CGPoint) -> CGPoint{
+        return CGPoint(x: x + offset.x, y: y + offset.y)
     }
 }

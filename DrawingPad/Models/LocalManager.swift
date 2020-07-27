@@ -62,7 +62,7 @@ fileprivate class ProjectsLocalAccess:ProjectsControlProtocol{
     }
 }
 
-fileprivate class LocalCanvasRawDataAccess: SaveCanvasModelProtocol,LoadCanvasModelProtocol{
+fileprivate class LocalCanvasRawDataAccess: ModifyCanvasModelProtocol,LoadAndDeleteCanvasModelProtocol{
     
     func loadCanvas(WithName name: String, completionHandler closure: @escaping (Bool, CanvasObject?) -> Void) {
         if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(name).json")
@@ -107,5 +107,21 @@ fileprivate class LocalCanvasRawDataAccess: SaveCanvasModelProtocol,LoadCanvasMo
         }
     }
     
+    func deleteCanvas(_ canvasName:String, completionHandler closure: @escaping (Bool) -> Void) {
+        if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(canvasName).json"){
+            do {
+                try FileManager.default.removeItem(at: url)
+                DispatchQueue.main.async {
+                    closure(true)
+                }
+            } catch let error {
+                print("delete canvas failed: \(error)")
+                DispatchQueue.main.async {
+                    closure(false)
+                }
+            }
+            
+        }
+    }
     
 }

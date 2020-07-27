@@ -8,9 +8,11 @@
 
 import Foundation
 
-protocol LoadCanvasModelProtocol: class{
+protocol LoadAndDeleteCanvasModelProtocol: class{
     func loadCanvas(WithName name:String, completionHandler closure: @escaping (Bool,CanvasObject?)->Void)
+    func deleteCanvas(_ canvasName:String, completionHandler closure: @escaping (Bool)->Void)
 }
-protocol SaveCanvasModelProtocol : class{
+protocol ModifyCanvasModelProtocol : class{
     func saveCanvas(_ canvas:CanvasObject, completionHandler closure: @escaping (Bool)->Void)
+    
 }

@@ -77,22 +77,107 @@
                                     </button>
                                 </subviews>
                             </stackView>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="20" translatesAutoresizingMaskIntoConstraints="NO" id="9gq-tc-4uz">
+                                <rect key="frame" x="812" y="1316" width="204" height="31"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="j4w-s2-d73"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="sliderValueChanged:" destination="JEX-9P-axG" eventType="valueChanged" id="Rcg-f1-thq"/>
+                                </connections>
+                            </slider>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="bottom" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="lmB-P8-WZb">
+                                <rect key="frame" x="906" y="1055.5" width="98" height="245.5"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cPn-wY-afC">
+                                        <rect key="frame" x="58" y="0.0" width="40" height="40"/>
+                                        <color key="backgroundColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="eti-Sd-XQw"/>
+                                            <constraint firstAttribute="height" constant="40" id="q6M-id-vvi"/>
+                                        </constraints>
+                                        <connections>
+                                            <action selector="pickColor:" destination="JEX-9P-axG" eventType="touchUpInside" id="J4Z-BD-nXO"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1w2-TG-zBG">
+                                        <rect key="frame" x="58" y="45" width="40" height="40"/>
+                                        <color key="backgroundColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="Ktb-yT-We3"/>
+                                            <constraint firstAttribute="width" constant="40" id="Vgx-VF-1nh"/>
+                                        </constraints>
+                                        <connections>
+                                            <action selector="pickColor:" destination="JEX-9P-axG" eventType="touchUpInside" id="nuj-gd-kW6"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="La4-zZ-jnU">
+                                        <rect key="frame" x="58" y="90" width="40" height="40"/>
+                                        <color key="backgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="5wK-kR-ff0"/>
+                                            <constraint firstAttribute="width" constant="40" id="d6q-M0-XJ2"/>
+                                        </constraints>
+                                        <connections>
+                                            <action selector="pickColor:" destination="JEX-9P-axG" eventType="touchUpInside" id="rGT-lz-984"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="psU-VT-iUz">
+                                        <rect key="frame" x="58" y="135" width="40" height="40"/>
+                                        <color key="backgroundColor" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="EsZ-pr-2Hh"/>
+                                            <constraint firstAttribute="width" constant="40" id="LWW-l6-MZu"/>
+                                        </constraints>
+                                        <connections>
+                                            <action selector="pickColor:" destination="JEX-9P-axG" eventType="touchUpInside" id="k1B-Ht-9dx"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mj6-in-7ee">
+                                        <rect key="frame" x="58" y="180" width="40" height="40"/>
+                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="Qdu-C7-v67"/>
+                                            <constraint firstAttribute="height" constant="40" id="n92-5G-BAT"/>
+                                        </constraints>
+                                        <connections>
+                                            <action selector="pickColor:" destination="JEX-9P-axG" eventType="touchUpInside" id="56A-ic-sCQ"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pencil Color" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mUx-wD-MEJ">
+                                        <rect key="frame" x="0.0" y="225" width="98" height="20.5"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20.5" id="S6w-E1-qVt"/>
+                                            <constraint firstAttribute="width" constant="98" id="xkT-BJ-5kZ"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="bottom" secondItem="Ytg-Nk-EPf" secondAttribute="bottom" constant="20" id="3aH-Lk-ndt"/>
                             <constraint firstItem="gZE-uh-Nwe" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="9HO-I7-eEl"/>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="bottom" secondItem="gZE-uh-Nwe" secondAttribute="bottom" id="As6-fX-tin"/>
+                            <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="lmB-P8-WZb" secondAttribute="trailing" constant="20" id="Ds6-x3-Wqk"/>
+                            <constraint firstItem="VUw-jc-0yf" firstAttribute="bottom" secondItem="9gq-tc-4uz" secondAttribute="bottom" constant="20" id="JoC-7B-N3k"/>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="gZE-uh-Nwe" secondAttribute="trailing" id="LAW-Ss-11T"/>
+                            <constraint firstItem="9gq-tc-4uz" firstAttribute="top" secondItem="lmB-P8-WZb" secondAttribute="bottom" constant="15" id="Rs1-WR-6Oo"/>
                             <constraint firstItem="gZE-uh-Nwe" firstAttribute="top" secondItem="VUw-jc-0yf" secondAttribute="top" id="cCl-gy-6kE"/>
+                            <constraint firstItem="9gq-tc-4uz" firstAttribute="trailing" secondItem="VUw-jc-0yf" secondAttribute="trailing" constant="-10" id="qii-yA-6jo"/>
                             <constraint firstItem="Ytg-Nk-EPf" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" constant="20" id="xUT-7d-r8v"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="VUw-jc-0yf"/>
                     </view>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Projects" id="mOI-FS-AaM"/>
+                    <navigationItem key="navigationItem" title="Canvas" id="mOI-FS-AaM"/>
                     <connections>
                         <outlet property="canvas" destination="gZE-uh-Nwe" id="wLP-9T-rW4"/>
+                        <outlet property="colorIndicatorLabel" destination="mUx-wD-MEJ" id="Fx6-EM-oLx"/>
+                        <outlet property="slider" destination="9gq-tc-4uz" id="tE7-Mh-gEy"/>
                         <outletCollection property="collectionOfButtons" destination="UIW-A3-LYb" collectionClass="NSMutableArray" id="NW9-EW-VA1"/>
                         <outletCollection property="collectionOfButtons" destination="CEa-oq-pSN" collectionClass="NSMutableArray" id="R6K-RQ-B54"/>
                         <outletCollection property="collectionOfButtons" destination="Wr2-k0-lZN" collectionClass="NSMutableArray" id="W7m-tU-X9J"/>
@@ -125,7 +210,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="60" id="WCw-Qf-5nD">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="60" id="WCw-Qf-5nD" customClass="ProjectBrifeTableViewCell" customModule="DrawingPad" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="375" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WCw-Qf-5nD" id="37f-cq-3Eg">
@@ -165,6 +250,9 @@
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <connections>
+                                    <outlet property="createdTimeLable" destination="pQP-Vr-uMa" id="iNU-Vw-zQF"/>
+                                    <outlet property="thumbNailsImageView" destination="d9w-HG-lDd" id="Lka-xl-NSO"/>
+                                    <outlet property="workingTimeLabel" destination="qVD-Gu-Hfc" id="4Qs-0q-OWZ"/>
                                     <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showDetail" id="6S0-TO-JiA"/>
                                 </connections>
                             </tableViewCell>
@@ -175,7 +263,7 @@
                             <outlet property="delegate" destination="7bK-jq-Zjz" id="RA6-mI-bju"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Master" id="Zdf-7t-Un8"/>
+                    <navigationItem key="navigationItem" title="Projects" id="Zdf-7t-Un8"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rux-fX-hf1" sceneMemberID="firstResponder"/>
             </objects>

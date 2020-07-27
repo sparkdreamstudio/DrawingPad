@@ -20,10 +20,10 @@ struct CanvasBrife : Codable{
 class ProjectsManager{
     private var brifes:[CanvasBrife]=[CanvasBrife]()
     var projectdelegate:ProjectsControlProtocol?
-    var canvasdelegate: (LoadCanvasModelProtocol & SaveCanvasModelProtocol)?
+    var canvasdelegate: (LoadAndDeleteCanvasModelProtocol & ModifyCanvasModelProtocol)?
     
     subscript(index:Int) -> CanvasBrife?{
-        if index > count
+        if index >= count
         {
             return nil
         }
@@ -51,6 +51,41 @@ class ProjectsManager{
         })
     }
     
+    func deleteCanvas(at index:Int, completionHandler closure:@escaping (Bool)->Void){
+        if(index < count){
+            let brife = brifes[index]
+            brifes.remove(at: index);
+            projectdelegate?.saveModel(brifes, closure: { [weak self] (success) in
+                if success == true{
+                    self?.canvasdelegate?.deleteCanvas(brife.unique_name, completionHandler: { (success) in
+                        if success == true{
+                            DispatchQueue.main.async {
+                                closure(success)
+                            }
+                        }
+                        else{
+                            self?.brifes.insert(brife, at: index)
+                            DispatchQueue.main.async {
+                                closure(false)
+                            }
+                        }
+                    })
+                }
+                else{
+                    self?.brifes.insert(brife, at: index)
+                    DispatchQueue.main.async {
+                        closure(false)
+                    }
+                }
+            })
+            
+        }
+        else{
+            closure(false)
+        }
+        
+    }
+    
     func openProjects(completionHandler closure: @escaping (Bool)->Void){
         projectdelegate?.loadModel { [weak self] (success, _brifes) in
             if let nonNilBrifes = _brifes{
@@ -67,7 +102,7 @@ class ProjectsManager{
             
         }
     }
-    func openCanvas(at index:Int,With delegate:CanvasDrawingDelegate, completionHandler closure: @escaping (Bool,CanvasObject?)->Void ) -> Void {
+    func openCanvas(at index:Int, completionHandler closure: @escaping (Bool,CanvasObject?)->Void ) -> Void {
         if index < count {
             canvasdelegate?.loadCanvas(WithName: self.brifes[index].unique_name) { (success, canvas) in
                 var localcanvas = canvas
@@ -87,7 +122,7 @@ class ProjectsManager{
 }
 
 struct CanvasRawData: Codable{
-    var draws:[CanvasObject.ContinuousDrawing]
+    var draws:[CanvasObject.Operation]
     var drawsRecord : [[String]]
     var height:CGFloat
     var width:CGFloat
@@ -99,52 +134,12 @@ struct CanvasRawData: Codable{
 struct CanvasObject{
     private struct Brush{
         var width:CGFloat
-        var color:Color
-    }
-    struct Color: Codable {
-        var red: CGFloat
-        var green: CGFloat
-        var blue: CGFloat
-        var alpha: CGFloat?
-
-        var uiColor: UIColor {
-            set(newColor) {
-                self = Color(red: newColor.ciColor.red, green: newColor.ciColor.green, blue: newColor.ciColor.blue, alpha: newColor.ciColor.alpha)
-            }
-            get{
-                return UIColor(red: red, green: green, blue: blue, alpha: alpha ?? 1)
-            }
-            
-        }
-        static var black : Color{
-            get{
-                var color = Color(red: 0, green: 0, blue: 0, alpha: 0)
-                color.uiColor = UIColor.black
-                return color
-            }
-        }
+        var color:StrokeColor
     }
     
-    struct Stroke : Codable {
-        var curveStart:Point
-        var curveEnd:Point
-        var curveControl1:Point
-        var curveControl2:Point
-        var width:CGFloat
-        var color:Color
-        var time:Date = Date()
-    }
-    struct Point: Codable{
-        var x:CGFloat
-        var y:CGFloat
-        init(cgPoint:CGPoint) {
-            x = cgPoint.x
-            y = cgPoint.y
-        }
-    }
-    struct ContinuousDrawing : Codable {
+    struct Operation : Codable {
         var uuid:String = NSUUID().uuidString
-        var strokes:[Stroke] = [Stroke]()
+        var strokes:[StrokeRaw] = [StrokeRaw]()
     }
     private enum Status : UInt8{
         case idle = 0b00000000
@@ -155,7 +150,7 @@ struct CanvasObject{
     
     //MARK: Canvas Data
     var name:String
-    private var draws:[ContinuousDrawing]
+    private var draws:[Operation]
     private var drawsRecord : [[String]]
     var size:CGSize
     
@@ -164,13 +159,13 @@ struct CanvasObject{
     private var brush:Brush = Brush(width: 1, color: .black)
     
     //MARK: Delegate
-    weak var savedelegate:SaveCanvasModelProtocol?
-    weak var drawingDelegate:CanvasDrawingDelegate?
+    weak var savedelegate:ModifyCanvasModelProtocol?
+    weak var drawingDelegate:CanvasModelDelegate?
     
     init() {
         name = NSUUID().uuidString
         drawsRecord=[[String]]()
-        draws = [ContinuousDrawing]()
+        draws = [Operation]()
         size = CGSize(width: 2000, height: 2000)
     }
     init(withName fileName:String, andRawData rawData:CanvasRawData) {
@@ -191,24 +186,26 @@ struct CanvasObject{
         
         brush.width = width
     }
-    mutating func startContinuousDrawing(){
+    mutating func startDrawing(){
         status = status | Status.drawing.rawValue
-        let drawing = ContinuousDrawing()
+        let drawing = Operation()
         draws.append(drawing)
         if(status & Status.recording.rawValue > 0){
             drawsRecord.append([String]())
             drawsRecord[drawsRecord.count-1].append(drawing.uuid)
         }
     }
-    mutating func addCurve(withPoints points:[CGPoint]){
+    mutating func addStrokes(_ strokes:[StrokeRaw]){
         if status & Status.drawing.rawValue > 0 {
-            let stroke = Stroke(curveStart: Point(cgPoint: points[0]), curveEnd: Point(cgPoint: points[3]), curveControl1: Point(cgPoint: points[1]), curveControl2: Point(cgPoint: points[2]), width: self.brush.width, color: brush.color)
-            draws[draws.count-1].strokes.append(stroke)
-            drawingDelegate?.getStrokes([stroke])
+            draws[draws.count-1].strokes = draws[draws.count-1].strokes+strokes
+            drawingDelegate?.getStrokes(strokes)
         }
     }
-    mutating func endContinousDrawing(){
+    mutating func endDrawing(WithStroke stroke:StrokeRaw?){
         status = status & (~Status.drawing.rawValue)
+        if let _stroke = stroke{
+            draws[draws.count-1].strokes.append(_stroke)
+        }
         savedelegate?.saveCanvas(self, completionHandler: { (success) in
             
         })
@@ -226,12 +223,16 @@ struct CanvasObject{
         status = Status.idle.rawValue
     }
     func redraw(_ rect:CGRect){
-        drawingDelegate?.getStrokes(draws.flatMap({ (draw) -> [Stroke] in
-            return draw.strokes
-        }))
+        var strokes = [StrokeRaw]()
+        for draw in draws{
+            for _stroke in draw.strokes{
+                strokes.append(_stroke)
+            }
+        }
+        drawingDelegate?.getStrokes(strokes)
     }
 }
 
-protocol CanvasDrawingDelegate : class {
-    func getStrokes(_ strokes:[CanvasObject.Stroke])
+protocol CanvasModelDelegate : class {
+    func getStrokes(_ strokes:[StrokeRaw])
 }
