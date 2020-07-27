@@ -187,12 +187,13 @@ class MasterViewController: UITableViewController {
             if editingStyle == .delete {
                //objects.remove(at: indexPath.row)
                 blocktag = 1
+                let name = projects[indexPath.row]?.unique_name
                 projects.deleteCanvas(at: indexPath.row) {[weak self] (success) in
                     self?.blocktag = 0
                     if(success == true){
                         self?.tableView.deleteRows(at: [indexPath], with: .fade)
                         self?.thumbNails.remove(at: indexPath.row)
-                        if self?.tableView.indexPathForSelectedRow?.row == indexPath.row
+                        if self?.detailViewController?.canvasObject?.name == name
                         {
                             self?.detailViewController?.canvasObject = nil
                         }
